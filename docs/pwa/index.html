@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ScribeTag Mobile</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007bff">
+</head>
+<body>
+    <div class="container" style="box-shadow: none;">
+        <h1>🖋️ ScribeTag</h1>
+        
+        <div class="input-group">
+            <select id="pwa-type" onchange="toggleForm('pwa')" style="font-size: 18px; padding: 15px;">
+                <option value="text">Plain Text</option>
+                <option value="url">Website Link</option>
+                <option value="wifi">WiFi Login</option>
+            </select>
+        </div>
+
+        <div id="pwa-text-group" class="input-group pwa-group">
+            <textarea id="pwa-text" rows="3" placeholder="Enter text..."></textarea>
+        </div>
+
+        <div id="pwa-url-group" class="input-group pwa-group" style="display:none;">
+            <input type="url" id="pwa-url" placeholder="example.com">
+        </div>
+
+        <div id="pwa-wifi-group" class="input-group pwa-group" style="display:none;">
+            <input type="text" id="pwa-ssid" placeholder="Network Name">
+            <input type="text" id="pwa-pass" placeholder="Password">
+        </div>
+
+        <button class="btn" style="width: 100%; padding: 15px;" onclick="generateScribeTag('pwa', 'pwa-canvas', 'pwa-instructions')">Create Tag</button>
+
+        <canvas id="pwa-canvas"></canvas>
+        <div id="pwa-instructions" class="instructions"></div>
+    </div>
+    
+    <script src="../app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(() => console.log("PWA Ready"));
+        }
+    </script>
+</body>
+</html>
