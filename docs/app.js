@@ -1,136 +1,151 @@
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
+// ScribeGrid - Step-by-Step Engine
+let currentGrid = [];
+let currentStep = 0;
+const COLS = 4; // 4 squares per row
 
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-// ScribeTag Core Encoding and Drawing Engine
-
-function generateScribeTag(formId, canvasId, instructionsId) {
-    const type = document.getElementById(formId + '-type').value;
+function generateScribeTag(formPrefix) {
+    const type = document.getElementById(`${formPrefix}-type`).value;
     let payload = "";
 
-    // Format data based on selected type
-    if (type === 'text') {
-        payload = document.getElementById(formId + '-text').value;
-    } else if (type === 'url') {
-        payload = document.getElementById(formId + '-url').value;
-        if (!payload.startsWith('http')) payload = 'https://' + payload;
-    } else if (type === 'wifi') {
-        const ssid = document.getElementById(formId + '-ssid').value;
-        const pass = document.getElementById(formId + '-pass').value;
-        payload = `WIFI:T:WPA;S:${ssid};P:${pass};;`; // Standard WiFi String
+    if (type === 'text') payload = document.getElementById(`${formPrefix}-text`).value;
+    else if (type === 'url') payload = document.getElementById(`${formPrefix}-url`).value;
+    else if (type === 'wifi') {
+        const ssid = document.getElementById(`${formPrefix}-ssid`).value;
+        const pass = document.getElementById(`${formPrefix}-pass`).value;
+        payload = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
     }
 
-    if (!payload) return alert("Please enter data to encode.");
+    if (!payload) return alert("Please enter data.");
 
-    // Convert to UTF-8 Bytes (Supports Turkish / all ASCII perfectly)
+    // Encode text to bytes (Supports Turkish)
     const encoder = new TextEncoder();
     const payloadBytes = encoder.encode(payload);
-
-    // Create ScribeTag Array: [Header Byte] + [Payload Bytes]
-    // Header: 1 = Text, 2 = URL, 3 = WiFi
+    
+    // Header byte identifies type (1=Text, 2=URL, 3=WiFi)
     const headerByte = type === 'text' ? 1 : (type === 'url' ? 2 : 3);
-    const totalBytes = new Uint8Array(payloadBytes.length + 1);
-    totalBytes[0] = headerByte;
-    totalBytes.set(payloadBytes, 1);
+    
+    // Build array: Anchor (special), Header, then Data
+    currentGrid = ['ANCHOR', headerByte, ...payloadBytes];
+    currentStep = 0;
 
-    drawTag(totalBytes, canvasId);
-    writeInstructions(totalBytes, instructionsId, type);
+    document.getElementById(`${formPrefix}-input-area`).style.display = 'none';
+    document.getElementById(`wizard-container`).style.display = 'block';
+    
+    updateWizard();
 }
 
-function drawTag(bytes, canvasId) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    
-    const nodeSpacing = 100;
-    const padding = 50;
-    canvas.width = (bytes.length * nodeSpacing) + padding;
-    canvas.height = 200;
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+function updateWizard() {
+    const totalSteps = currentGrid.length;
+    const byte = currentGrid[currentStep];
+    const row = Math.floor(currentStep / COLS);
+    const col = currentStep % COLS;
 
-    // Draw Spine
-    ctx.beginPath();
-    ctx.moveTo(padding, 100);
-    ctx.lineTo(padding + (bytes.length * nodeSpacing) - nodeSpacing, 100);
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = "#000";
-    ctx.stroke();
-
-    // Draw Nodes
-    bytes.forEach((byte, i) => {
-        const cx = padding + (i * nodeSpacing);
-        const cy = 100;
-        const radius = 35;
-
-        ctx.beginPath(); ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = "#fff"; ctx.fill();
-        ctx.lineWidth = 2; ctx.stroke();
-
-        ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2 * Math.PI);
-        ctx.fillStyle = "#000"; ctx.fill();
-
-        // Draw Bits (8 directions)
-        const bin = byte.toString(2).padStart(8, '0');
-        const angles = [-Math.PI/2, -Math.PI/4, 0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, -3*Math.PI/4];
-
-        for (let j = 0; j < 8; j++) {
-            if (bin[j] === '1') {
-                ctx.beginPath();
-                ctx.moveTo(cx, cy);
-                ctx.lineTo(cx + Math.cos(angles[j]) * radius, cy + Math.sin(angles[j]) * radius);
-                ctx.lineWidth = 3; ctx.stroke();
-            }
-        }
-    });
-}
-
-function writeInstructions(bytes, divId, type) {
-    const div = document.getElementById(divId);
-    const dirs = ["Top", "Top-Right", "Right", "Bottom-Right", "Bottom", "Bottom-Left", "Left", "Top-Left"];
-    
-    let html = `<h3>How to Draw Your ScribeTag</h3>
-                <p><b>1.</b> Draw a long horizontal line.</p>
-                <p><b>2.</b> Draw <b>${bytes.length}</b> circles along the line.</p>
-                <p><b>3.</b> Draw lines from the center dot of each circle pointing in these directions:</p>
-                <ol>`;
-
-    bytes.forEach((byte, i) => {
-        const bin = byte.toString(2).padStart(8, '0');
-        let active = [];
-        for (let j = 0; j < 8; j++) if (bin[j] === '1') active.push(`<b>${dirs[j]}</b>`);
+    // 1. Update Text Instruction
+    let text = "";
+    if (byte === 'ANCHOR') {
+        text = "Draw a square at the TOP-LEFT.<br>Draw a smaller square inside it (Anchor).";
+    } else {
+        const positionText = col === 0 
+            ? "Start a NEW ROW below. Draw a square." 
+            : "Draw a square attached to the RIGHT.";
         
-        let note = i === 0 ? ` <i>(Identifies as ${type.toUpperCase()})</i>` : "";
-        html += `<li><b>Circle ${i + 1}:</b> ${active.length ? active.join(', ') : 'None'}${note}</li>`;
-    });
+        let shapes = getShapesForByte(byte);
+        text = `${positionText}<br><br><span style="color:var(--primary)">Inside it, draw: <b>${shapes.length ? shapes.join(', ') : 'Leave Empty'}</b></span>`;
+    }
+    document.getElementById('instruction-text').innerHTML = `Step ${currentStep + 1} of ${totalSteps}<br><br>${text}`;
 
-    html += `</ol>`;
-    div.innerHTML = html;
+    // 2. Draw the large single square on Canvas
+    drawStepCanvas(byte);
+
+    // 3. Update Minimap
+    updateMinimap(totalSteps);
+
+    // 4. Update Buttons
+    document.getElementById('btn-prev').disabled = currentStep === 0;
+    document.getElementById('btn-next').innerText = currentStep === totalSteps - 1 ? "Finish" : "Next Step >";
 }
 
-// UI toggle for form types
-function toggleForm(formId) {
-    const type = document.getElementById(formId + '-type').value;
-    document.querySelectorAll('.' + formId + '-group').forEach(el => el.style.display = 'none');
-    document.getElementById(formId + '-' + type + '-group').style.display = 'block';
+function getShapesForByte(byte) {
+    const bin = byte.toString(2).padStart(8, '0');
+    const shapes = [];
+    if (bin[0] === '1') shapes.push("Horizontal Line (-)");
+    if (bin[1] === '1') shapes.push("Vertical Line (|)");
+    if (bin[2] === '1') shapes.push("Diagonal (/)");
+    if (bin[3] === '1') shapes.push("Diagonal (\\)");
+    if (bin[4] === '1') shapes.push("Dot Top-Left");
+    if (bin[5] === '1') shapes.push("Dot Top-Right");
+    if (bin[6] === '1') shapes.push("Dot Bottom-Left");
+    if (bin[7] === '1') shapes.push("Dot Bottom-Right");
+    return shapes;
+}
+
+function drawStepCanvas(byte) {
+    const cvs = document.getElementById('step-canvas');
+    const ctx = cvs.getContext('2d');
+    cvs.width = 200; cvs.height = 200;
+    ctx.clearRect(0,0,200,200);
+
+    // Outline
+    ctx.lineWidth = 6; ctx.strokeRect(10, 10, 180, 180);
+
+    if (byte === 'ANCHOR') {
+        ctx.strokeRect(50, 50, 100, 100);
+        return;
+    }
+
+    const bin = byte.toString(2).padStart(8, '0');
+    ctx.lineWidth = 4;
+    
+    // Lines
+    if (bin[0] === '1') { ctx.beginPath(); ctx.moveTo(10, 100); ctx.lineTo(190, 100); ctx.stroke(); }
+    if (bin[1] === '1') { ctx.beginPath(); ctx.moveTo(100, 10); ctx.lineTo(100, 190); ctx.stroke(); }
+    if (bin[2] === '1') { ctx.beginPath(); ctx.moveTo(10, 190); ctx.lineTo(190, 10); ctx.stroke(); }
+    if (bin[3] === '1') { ctx.beginPath(); ctx.moveTo(10, 10); ctx.lineTo(190, 190); ctx.stroke(); }
+
+    // Dots
+    ctx.fillStyle = "black";
+    const drawDot = (x, y) => { ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI*2); ctx.fill(); };
+    if (bin[4] === '1') drawDot(40, 40);
+    if (bin[5] === '1') drawDot(160, 40);
+    if (bin[6] === '1') drawDot(40, 160);
+    if (bin[7] === '1') drawDot(160, 160);
+}
+
+function updateMinimap(totalSteps) {
+    const map = document.getElementById('minimap');
+    map.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
+    map.innerHTML = '';
+    
+    const rows = Math.ceil(totalSteps / COLS);
+    const totalCells = rows * COLS;
+
+    for (let i = 0; i < totalCells; i++) {
+        let div = document.createElement('div');
+        div.className = 'mini-cell';
+        if (i === 0) div.classList.add('anchor');
+        else if (i < currentStep) div.classList.add('done');
+        else if (i === currentStep) div.classList.add('active');
+        
+        // Hide unused cells in the last row
+        if (i >= totalSteps) div.style.background = "transparent";
+        map.appendChild(div);
+    }
+}
+
+function nextStep() {
+    if (currentStep < currentGrid.length - 1) {
+        currentStep++; updateWizard();
+    } else {
+        alert("Grid Complete! You can now scan it.");
+        location.reload();
+    }
+}
+function prevStep() {
+    if (currentStep > 0) { currentStep--; updateWizard(); }
+}
+
+function toggleForm(prefix) {
+    const type = document.getElementById(`${prefix}-type`).value;
+    document.querySelectorAll(`.${prefix}-group`).forEach(el => el.style.display = 'none');
+    document.getElementById(`${prefix}-${type}-group`).style.display = 'block';
 }
