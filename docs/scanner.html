@@ -1,19 +1,4 @@
 <!DOCTYPE html>
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,13 +10,16 @@
         <h1>Scan ScribeGrid</h1>
         
         <div style="position:relative; margin-bottom: 15px;">
-            <video id="videoElement" autoplay playsinline style="width:100%; border:4px solid #333; border-radius:8px; background: black;"></video>
-            <!-- Highlight Box targeting the grid -->
+            <!-- CRITICAL FIX: added 'muted' and 'playsinline' -->
+            <video id="videoElement" autoplay playsinline muted style="width:100%; height: 300px; border:4px solid #333; border-radius:8px; background: black; object-fit: cover;"></video>
             <div style="position:absolute; top:10%; left:10%; right:10%; bottom:10%; border: 2px dashed rgba(255,0,0,0.5);"></div>
         </div>
 
+        <!-- NEW: Error display box so we aren't guessing -->
+        <p id="cam-error" style="color: red; font-weight: bold;"></p>
+
         <div class="flex-row">
-            <button class="btn btn-secondary" onclick="toggleFlash()" id="flash-btn">🔦 Toggle Flash</button>
+            <button class="btn btn-secondary" onclick="toggleFlash()" id="flash-btn" style="display:none;">🔦 Flash</button>
             <button class="btn btn-success" onclick="executeScan()">📸 Scan Grid</button>
         </div>
 
