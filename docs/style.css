@@ -8,6 +8,11 @@
  * Repository: https://github.com/Po2432/ScribeTag
  */
 
+/*
+ * Copyright (c) 2026 po2432
+ * Repository: https://github.com/Po2432/ScribeTag
+ */
+
 :root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; --danger: #dc2626; --success: #16a34a; }
 * { box-sizing: border-box; font-family: system-ui, sans-serif; }
 body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; text-align: center; }
