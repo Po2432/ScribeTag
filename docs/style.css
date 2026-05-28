@@ -1,44 +1,17 @@
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-:root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; }
+:root { --primary: #2563eb; --bg: #f8fafc; --text: #0f172a; --danger: #dc2626; --success: #16a34a; }
 * { box-sizing: border-box; font-family: system-ui, sans-serif; }
 body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; text-align: center; }
 .container { max-width: 600px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 8px; font-size: 16px; }
-.btn { display: inline-block; background: var(--primary); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; margin: 5px; font-size: 16px;}
+.btn { display: inline-block; background: var(--primary); color: white; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; margin: 5px; font-size: 16px; width: 100%;}
 .btn:hover { opacity: 0.9; }
 .btn-secondary { background: #64748b; }
+.btn-success { background: var(--success); }
+.btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
 .btn-nav { width: 45%; }
+.flex-row { display: flex; justify-content: space-between; gap: 10px; margin-top: 10px;}
 
-/* Step-by-Step Wizard Styles */
+/* Wizard Styles */
 #wizard-container { display: none; margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee; }
 #step-canvas { background: white; border: 4px solid #333; border-radius: 8px; margin: 15px 0; max-width: 250px; }
 #minimap { display: grid; gap: 2px; margin: 10px auto; max-width: 150px; background: #ccc; border: 2px solid #ccc; }
@@ -46,5 +19,4 @@ input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 2p
 .mini-cell.active { background: #facc15; border: 2px solid #ca8a04; }
 .mini-cell.done { background: #4ade80; }
 .mini-cell.anchor { background: #333; }
-.instruction-text { font-size: 18px; font-weight: bold; min-height: 60px; }
-.nav-buttons { display: flex; justify-content: space-between; margin-top: 15px; }
+.instruction-text { font-size: 18px; font-weight: bold; min-height: 80px; }
