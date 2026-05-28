@@ -1,45 +1,24 @@
 <!DOCTYPE html>
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ScribeGrid Creator</title>
+
+    <!--
+      Copyright (c) 2026 po2432
+      Repository: https://github.com/Po2432/ScribeTag
+    -->
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <div class="container">
         <h1>Create ScribeGrid</h1>
-        
+
         <div id="web-input-area">
+
             <div class="input-group">
                 <select id="web-type" onchange="toggleForm('web')">
                     <option value="text">Plain Text</option>
@@ -49,35 +28,87 @@
             </div>
 
             <div id="web-text-group" class="input-group web-group">
-                <textarea id="web-text" rows="3" placeholder="Enter text (Supports Turkish chars)"></textarea>
+                <textarea
+                    id="web-text"
+                    rows="3"
+                    placeholder="Enter text (Supports Turkish chars)">
+                </textarea>
             </div>
 
-            <div id="web-url-group" class="input-group web-group" style="display:none;">
-                <input type="url" id="web-url" placeholder="https://example.com">
+            <div id="web-url-group"
+                 class="input-group web-group"
+                 style="display:none;">
+                <input
+                    type="url"
+                    id="web-url"
+                    placeholder="https://example.com">
             </div>
 
-            <div id="web-wifi-group" class="input-group web-group" style="display:none;">
-                <input type="text" id="web-ssid" placeholder="Network Name">
-                <input type="text" id="web-pass" placeholder="Password">
+            <div id="web-wifi-group"
+                 class="input-group web-group"
+                 style="display:none;">
+                <input
+                    type="text"
+                    id="web-ssid"
+                    placeholder="Network Name">
+
+                <input
+                    type="text"
+                    id="web-pass"
+                    placeholder="Password">
             </div>
 
-            <button class="btn" style="width:100%" onclick="generateScribeTag('web')">Start Drawing Guide</button>
+            <button
+                class="btn"
+                style="width:100%"
+                onclick="generateScribeTag('web')">
+                Start Drawing Guide
+            </button>
         </div>
 
-        <!-- The Step-by-Step Wizard -->
+        <!-- Step-by-Step Wizard -->
         <div id="wizard-container">
             <div id="minimap"></div>
+
             <canvas id="step-canvas"></canvas>
+
             <div id="instruction-text" class="instruction-text"></div>
-            
-            <div class="nav-buttons">
-                <button id="btn-prev" class="btn btn-secondary btn-nav" onclick="prevStep()">< Prev</button>
-                <button id="btn-next" class="btn btn-nav" onclick="nextStep()">Next ></button>
+
+            <div class="flex-row">
+                <button
+                    id="btn-prev"
+                    class="btn btn-secondary btn-nav"
+                    onclick="prevStep()">
+                    &lt; Prev
+                </button>
+
+                <button
+                    id="btn-next"
+                    class="btn btn-nav"
+                    onclick="nextStep()">
+                    Next &gt;
+                </button>
             </div>
+
+            <!-- Template Button -->
+            <button
+                class="btn btn-outline"
+                style="margin-top:15px;"
+                onclick="downloadTemplate()">
+                📄 Download Blank Grid for Printing
+            </button>
         </div>
-        
-        <br><br><a href="index.html" class="btn btn-secondary" style="width:100%">Cancel & Back Home</a>
+
+        <br><br>
+
+        <a
+            href="index.html"
+            class="btn btn-secondary"
+            style="width:100%">
+            Cancel & Back Home
+        </a>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>
