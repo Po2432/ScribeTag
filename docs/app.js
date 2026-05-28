@@ -1,37 +1,6 @@
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-/*
- * Copyright (c) 2026 po2432
- * Repository: https://github.com/Po2432/ScribeTag
- */
-
-// ScribeGrid - Step-by-Step Engine
 let currentGrid = [];
 let currentStep = 0;
-const COLS = 4; // 4 squares per row
+const COLS = 4;
 
 function generateScribeTag(formPrefix) {
     const type = document.getElementById(`${formPrefix}-type`).value;
@@ -47,14 +16,12 @@ function generateScribeTag(formPrefix) {
 
     if (!payload) return alert("Please enter data.");
 
-    // Encode text to bytes (Supports Turkish)
     const encoder = new TextEncoder();
-    const payloadBytes = encoder.encode(payload);
+    const payloadBytes = encoder.encode(payload); // Naturally handles Capitals and Turkish!
     
-    // Header byte identifies type (1=Text, 2=URL, 3=WiFi)
     const headerByte = type === 'text' ? 1 : (type === 'url' ? 2 : 3);
     
-    // Build array: Anchor (special), Header, then Data
+    // ANCHOR is first, then Header, then Data
     currentGrid = ['ANCHOR', headerByte, ...payloadBytes];
     currentStep = 0;
 
@@ -67,30 +34,22 @@ function generateScribeTag(formPrefix) {
 function updateWizard() {
     const totalSteps = currentGrid.length;
     const byte = currentGrid[currentStep];
-    const row = Math.floor(currentStep / COLS);
     const col = currentStep % COLS;
 
-    // 1. Update Text Instruction
     let text = "";
     if (byte === 'ANCHOR') {
-        text = "Draw a square at the TOP-LEFT.<br>Draw a smaller square inside it (Anchor).";
+        text = "Draw your FIRST square at the top-left.<br><span style='color:var(--primary)'>Draw a large <b>X</b> inside it.</span><br><small>(This anchors the scanner)</small>";
     } else {
-        const positionText = col === 0 
-            ? "Start a NEW ROW below. Draw a square." 
-            : "Draw a square attached to the RIGHT.";
-        
+        const positionText = col === 0 ? "Start a NEW ROW below." : "Draw the next square to the RIGHT.";
         let shapes = getShapesForByte(byte);
-        text = `${positionText}<br><br><span style="color:var(--primary)">Inside it, draw: <b>${shapes.length ? shapes.join(', ') : 'Leave Empty'}</b></span>`;
+        text = `${positionText}<br><span style="color:var(--primary)">Inside it, draw: <b>${shapes.length ? shapes.join(', ') : 'Leave Empty'}</b></span>`;
     }
-    document.getElementById('instruction-text').innerHTML = `Step ${currentStep + 1} of ${totalSteps}<br><br>${text}`;
+    
+    document.getElementById('instruction-text').innerHTML = `Step ${currentStep + 1} of ${totalSteps}<br><br>${text}<br><small style="color:var(--danger); font-weight:normal;">Mistake? Scribble the whole square black to skip it!</small>`;
 
-    // 2. Draw the large single square on Canvas
     drawStepCanvas(byte);
-
-    // 3. Update Minimap
     updateMinimap(totalSteps);
 
-    // 4. Update Buttons
     document.getElementById('btn-prev').disabled = currentStep === 0;
     document.getElementById('btn-next').innerText = currentStep === totalSteps - 1 ? "Finish" : "Next Step >";
 }
@@ -115,26 +74,25 @@ function drawStepCanvas(byte) {
     cvs.width = 200; cvs.height = 200;
     ctx.clearRect(0,0,200,200);
 
-    // Outline
     ctx.lineWidth = 6; ctx.strokeRect(10, 10, 180, 180);
 
     if (byte === 'ANCHOR') {
-        ctx.strokeRect(50, 50, 100, 100);
+        ctx.lineWidth = 8;
+        ctx.beginPath(); ctx.moveTo(30, 30); ctx.lineTo(170, 170); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(170, 30); ctx.lineTo(30, 170); ctx.stroke();
         return;
     }
 
     const bin = byte.toString(2).padStart(8, '0');
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 6;
     
-    // Lines
     if (bin[0] === '1') { ctx.beginPath(); ctx.moveTo(10, 100); ctx.lineTo(190, 100); ctx.stroke(); }
     if (bin[1] === '1') { ctx.beginPath(); ctx.moveTo(100, 10); ctx.lineTo(100, 190); ctx.stroke(); }
     if (bin[2] === '1') { ctx.beginPath(); ctx.moveTo(10, 190); ctx.lineTo(190, 10); ctx.stroke(); }
     if (bin[3] === '1') { ctx.beginPath(); ctx.moveTo(10, 10); ctx.lineTo(190, 190); ctx.stroke(); }
 
-    // Dots
     ctx.fillStyle = "black";
-    const drawDot = (x, y) => { ctx.beginPath(); ctx.arc(x, y, 12, 0, Math.PI*2); ctx.fill(); };
+    const drawDot = (x, y) => { ctx.beginPath(); ctx.arc(x, y, 16, 0, Math.PI*2); ctx.fill(); };
     if (bin[4] === '1') drawDot(40, 40);
     if (bin[5] === '1') drawDot(160, 40);
     if (bin[6] === '1') drawDot(40, 160);
@@ -145,37 +103,52 @@ function updateMinimap(totalSteps) {
     const map = document.getElementById('minimap');
     map.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
     map.innerHTML = '';
-    
     const rows = Math.ceil(totalSteps / COLS);
-    const totalCells = rows * COLS;
-
-    for (let i = 0; i < totalCells; i++) {
+    
+    for (let i = 0; i < rows * COLS; i++) {
         let div = document.createElement('div');
         div.className = 'mini-cell';
         if (i === 0) div.classList.add('anchor');
         else if (i < currentStep) div.classList.add('done');
         else if (i === currentStep) div.classList.add('active');
-        
-        // Hide unused cells in the last row
         if (i >= totalSteps) div.style.background = "transparent";
         map.appendChild(div);
     }
 }
 
 function nextStep() {
-    if (currentStep < currentGrid.length - 1) {
-        currentStep++; updateWizard();
-    } else {
-        alert("Grid Complete! You can now scan it.");
-        location.reload();
-    }
+    if (currentStep < currentGrid.length - 1) { currentStep++; updateWizard(); } 
+    else { alert("Complete! You can now scan it."); location.reload(); }
 }
-function prevStep() {
-    if (currentStep > 0) { currentStep--; updateWizard(); }
-}
+function prevStep() { if (currentStep > 0) { currentStep--; updateWizard(); } }
 
 function toggleForm(prefix) {
     const type = document.getElementById(`${prefix}-type`).value;
     document.querySelectorAll(`.${prefix}-group`).forEach(el => el.style.display = 'none');
     document.getElementById(`${prefix}-${type}-group`).style.display = 'block';
+}
+
+function downloadTemplate() {
+    const size = 60;
+    const rows = Math.ceil(currentGrid.length / COLS);
+    const width = COLS * size + 20;
+    const height = rows * size + 20;
+    
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+        <rect width="100%" height="100%" fill="white"/>`;
+        
+    for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < COLS; c++) {
+            if (r * COLS + c < currentGrid.length) {
+                svg += `<rect x="${c*size + 10}" y="${r*size + 10}" width="${size}" height="${size}" fill="none" stroke="black" stroke-width="2"/>`;
+            }
+        }
+    }
+    svg += `</svg>`;
+    
+    const blob = new Blob([svg], {type: "image/svg+xml;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url; link.download = "ScribeGrid-Template.svg";
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
 }
