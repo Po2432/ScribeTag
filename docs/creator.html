@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScribeTag Creator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Create ScribeTag</h1>
+        
+        <div class="input-group">
+            <label>Tag Type:</label>
+            <select id="web-type" onchange="toggleForm('web')">
+                <option value="text">Plain Text</option>
+                <option value="url">Website (URL)</option>
+                <option value="wifi">Connect to WiFi</option>
+            </select>
+        </div>
+
+        <div id="web-text-group" class="input-group web-group">
+            <label>Your Text (Supports Turkish & ASCII):</label>
+            <textarea id="web-text" rows="3" placeholder="e.g. Merhaba çğışöü!"></textarea>
+        </div>
+
+        <div id="web-url-group" class="input-group web-group" style="display:none;">
+            <label>Website URL:</label>
+            <input type="text" id="web-url" placeholder="example.com">
+        </div>
+
+        <div id="web-wifi-group" class="input-group web-group" style="display:none;">
+            <label>Network Name (SSID):</label>
+            <input type="text" id="web-ssid" placeholder="MyWiFiNetwork">
+            <label>Password:</label>
+            <input type="text" id="web-pass" placeholder="Password123">
+        </div>
+
+        <button class="btn" onclick="generateScribeTag('web', 'web-canvas', 'web-instructions')">Generate</button>
+
+        <canvas id="web-canvas"></canvas>
+        <div id="web-instructions" class="instructions"></div>
+        <br><a href="index.html" class="btn btn-secondary">Back to Home</a>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
