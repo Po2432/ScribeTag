@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,25 +10,30 @@
         <h1>Scan ScribeGrid</h1>
         
         <div style="position:relative; margin-bottom: 15px;">
-            <!-- CRITICAL FIX: added 'muted' and 'playsinline' -->
             <video id="videoElement" autoplay playsinline muted style="width:100%; height: 300px; border:4px solid #333; border-radius:8px; background: black; object-fit: cover;"></video>
+            <!-- Guide Box -->
             <div style="position:absolute; top:10%; left:10%; right:10%; bottom:10%; border: 2px dashed rgba(255,0,0,0.5);"></div>
         </div>
 
-        <!-- NEW: Error display box so we aren't guessing -->
+        <!-- Hidden canvas for OpenCV processing -->
+        <canvas id="canvasOutput" style="display:none;"></canvas>
+
         <p id="cam-error" style="color: red; font-weight: bold;"></p>
+        <p id="cv-status" style="color: var(--primary); font-weight: bold;">Loading Vision Engine (OpenCV)...</p>
 
         <div class="flex-row">
             <button class="btn btn-secondary" onclick="toggleFlash()" id="flash-btn" style="display:none;">🔦 Flash</button>
-            <button class="btn btn-success" onclick="executeScan()">📸 Scan Grid</button>
+            <button class="btn btn-success" onclick="executeScan()" id="scan-btn" disabled>📸 Scan Grid</button>
         </div>
 
-        <div id="scan-result" style="margin-top:15px; padding:15px; background:#d4edda; color:#155724; display:none; border-radius:8px; word-wrap:break-word; font-weight:bold;"></div>
+        <div id="scan-result" style="margin-top:15px; padding:15px; background:#d4edda; color:#155724; display:none; border-radius:8px; word-wrap:break-word; font-weight:bold; text-align: left;"></div>
         
         <br>
         <a href="index.html" class="btn btn-outline">Back to Menu</a>
     </div>
     
+    <!-- Load OpenCV.js (Crucial for real scanning) -->
+    <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady();"></script>
     <script src="scanner.js"></script>
 </body>
 </html>
