@@ -13,6 +13,11 @@
  * Repository: https://github.com/Po2432/ScribeTag
  */
 
+/*
+ * Copyright (c) 2026 po2432
+ * Repository: https://github.com/Po2432/ScribeTag
+ */
+
 // ScribeTag Core Encoding and Drawing Engine
 
 function generateScribeTag(formId, canvasId, instructionsId) {
