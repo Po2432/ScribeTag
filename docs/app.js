@@ -18,6 +18,11 @@
  * Repository: https://github.com/Po2432/ScribeTag
  */
 
+/*
+ * Copyright (c) 2026 po2432
+ * Repository: https://github.com/Po2432/ScribeTag
+ */
+
 // ScribeGrid - Step-by-Step Engine
 let currentGrid = [];
 let currentStep = 0;
