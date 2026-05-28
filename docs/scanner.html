@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScribeTag Scanner</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Scan ScribeTag</h1>
+        <p>Align the horizontal line (the spine) with the red laser.</p>
+        
+        <div id="camera-container">
+            <video id="videoElement" autoplay playsinline></video>
+            <div class="scan-overlay"></div>
+        </div>
+
+        <div id="scan-result"></div>
+
+        <a href="index.html" class="btn btn-secondary">Back to Home</a>
+    </div>
+    <script src="scanner.js"></script>
+</body>
+</html>
