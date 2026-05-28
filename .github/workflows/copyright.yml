@@ -1,0 +1,152 @@
+name: Add Copyright Headers
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-headers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add copyright headers
+        shell: bash
+        run: |
+          set -e
+
+          CURRENT_YEAR=$(date +%Y)
+
+          if [ "$CURRENT_YEAR" = "2026" ]; then
+            YEAR_TEXT="2026"
+          else
+            YEAR_TEXT="2026-$CURRENT_YEAR"
+          fi
+
+          PHP_JS_CSS_HEADER="/*
+           * Copyright (c) $YEAR_TEXT po2432
+           * Repository: https://github.com/Po2432/ScribeTag
+           */"
+
+          HTML_HEADER="<!--
+            Copyright (c) $YEAR_TEXT po2432
+            Repository: https://github.com/Po2432/ScribeTag
+          -->"
+
+          remove_existing_header() {
+            local file="$1"
+
+            perl -0777 -i -pe '
+              s~^\s*/\*\s*\n\s*\*\s*Copyright \(c\).*?RestoRoot\s*\n\s*\*/\s*\n?~~s;
+              s~^\s*<!--\s*\n\s*Copyright \(c\).*?RestoRoot\s*\n\s*-->\s*\n?~~s;
+            ' "$file"
+          }
+
+          process_php() {
+            local file="$1"
+
+            remove_existing_header "$file"
+
+            if grep -q "^<?php" "$file"; then
+              perl -0777 -i -pe "
+                s~^<\?php~<?php\n\n$PHP_JS_CSS_HEADER~s
+              " "$file"
+            else
+              TEMP=$(mktemp)
+
+              {
+                echo "$PHP_JS_CSS_HEADER"
+                echo
+                cat "$file"
+              } > "$TEMP"
+
+              mv "$TEMP" "$file"
+            fi
+          }
+
+          process_html() {
+            local file="$1"
+
+            remove_existing_header "$file"
+
+            if grep -iq "<!doctype html>" "$file"; then
+              perl -0777 -i -pe "
+                s~<!DOCTYPE html>~<!DOCTYPE html>\n\n$HTML_HEADER~i
+              " "$file"
+            elif grep -iq "<html" "$file"; then
+              perl -0777 -i -pe "
+                s~<html~$HTML_HEADER\n\n<html~i
+              " "$file"
+            else
+              TEMP=$(mktemp)
+
+              {
+                echo "$HTML_HEADER"
+                echo
+                cat "$file"
+              } > "$TEMP"
+
+              mv "$TEMP" "$file"
+            fi
+          }
+
+          process_js_css() {
+            local file="$1"
+
+            remove_existing_header "$file"
+
+            TEMP=$(mktemp)
+
+            {
+              echo "$PHP_JS_CSS_HEADER"
+              echo
+              cat "$file"
+            } > "$TEMP"
+
+            mv "$TEMP" "$file"
+          }
+
+          while IFS= read -r -d '' file; do
+            case "$file" in
+              *.php)
+                process_php "$file"
+                ;;
+              *.html)
+                process_html "$file"
+                ;;
+              *.js|*.css)
+                process_js_css "$file"
+                ;;
+            esac
+          done < <(
+            find . \
+              -type f \
+              ! -path "./.git/*" \
+              ! -path "./vendor/*" \
+              ! -path "./node_modules/*" \
+              -print0
+          )
+
+      - name: Commit and push changes
+        shell: bash
+        run: |
+          git config user.name "github-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes detected"
+            exit 0
+          fi
+
+          git commit -m "Add/update copyright headers"
+          git push
