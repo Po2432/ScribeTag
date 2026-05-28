@@ -1,75 +1,52 @@
 <!DOCTYPE html>
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScribeTag Creator</title>
+    <title>ScribeGrid Creator</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Create ScribeTag</h1>
+        <h1>Create ScribeGrid</h1>
         
-        <div class="input-group">
-            <label>Tag Type:</label>
-            <select id="web-type" onchange="toggleForm('web')">
-                <option value="text">Plain Text</option>
-                <option value="url">Website (URL)</option>
-                <option value="wifi">Connect to WiFi</option>
-            </select>
+        <div id="web-input-area">
+            <div class="input-group">
+                <select id="web-type" onchange="toggleForm('web')">
+                    <option value="text">Plain Text</option>
+                    <option value="url">Website URL</option>
+                    <option value="wifi">Connect to WiFi</option>
+                </select>
+            </div>
+
+            <div id="web-text-group" class="input-group web-group">
+                <textarea id="web-text" rows="3" placeholder="Enter text (Supports Turkish chars)"></textarea>
+            </div>
+
+            <div id="web-url-group" class="input-group web-group" style="display:none;">
+                <input type="url" id="web-url" placeholder="https://example.com">
+            </div>
+
+            <div id="web-wifi-group" class="input-group web-group" style="display:none;">
+                <input type="text" id="web-ssid" placeholder="Network Name">
+                <input type="text" id="web-pass" placeholder="Password">
+            </div>
+
+            <button class="btn" style="width:100%" onclick="generateScribeTag('web')">Start Drawing Guide</button>
         </div>
 
-        <div id="web-text-group" class="input-group web-group">
-            <label>Your Text (Supports Turkish & ASCII):</label>
-            <textarea id="web-text" rows="3" placeholder="e.g. Merhaba çğışöü!"></textarea>
+        <!-- The Step-by-Step Wizard -->
+        <div id="wizard-container">
+            <div id="minimap"></div>
+            <canvas id="step-canvas"></canvas>
+            <div id="instruction-text" class="instruction-text"></div>
+            
+            <div class="nav-buttons">
+                <button id="btn-prev" class="btn btn-secondary btn-nav" onclick="prevStep()">< Prev</button>
+                <button id="btn-next" class="btn btn-nav" onclick="nextStep()">Next ></button>
+            </div>
         </div>
-
-        <div id="web-url-group" class="input-group web-group" style="display:none;">
-            <label>Website URL:</label>
-            <input type="text" id="web-url" placeholder="example.com">
-        </div>
-
-        <div id="web-wifi-group" class="input-group web-group" style="display:none;">
-            <label>Network Name (SSID):</label>
-            <input type="text" id="web-ssid" placeholder="MyWiFiNetwork">
-            <label>Password:</label>
-            <input type="text" id="web-pass" placeholder="Password123">
-        </div>
-
-        <button class="btn" onclick="generateScribeTag('web', 'web-canvas', 'web-instructions')">Generate</button>
-
-        <canvas id="web-canvas"></canvas>
-        <div id="web-instructions" class="instructions"></div>
-        <br><a href="index.html" class="btn btn-secondary">Back to Home</a>
+        
+        <br><br><a href="index.html" class="btn btn-secondary" style="width:100%">Cancel & Back Home</a>
     </div>
     <script src="app.js"></script>
 </body>
