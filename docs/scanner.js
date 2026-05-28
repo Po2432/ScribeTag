@@ -8,6 +8,11 @@
  * Repository: https://github.com/Po2432/ScribeTag
  */
 
+/*
+ * Copyright (c) 2026 po2432
+ * Repository: https://github.com/Po2432/ScribeTag
+ */
+
 // scanner.js
 async function startScanner() {
     const video = document.getElementById('videoElement');
