@@ -23,6 +23,11 @@
  * Repository: https://github.com/Po2432/ScribeTag
  */
 
+/*
+ * Copyright (c) 2026 po2432
+ * Repository: https://github.com/Po2432/ScribeTag
+ */
+
 let currentGrid = [];
 let currentStep = 0;
 const COLS = 4;
