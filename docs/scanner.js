@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 po2432
+ * Repository: https://github.com/Po2432/ScribeTag
+ */
+
 let video = document.getElementById('videoElement');
 let errorText = document.getElementById('cam-error');
 let stream = null;
