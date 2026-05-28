@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 po2432
+ * Repository: https://github.com/Po2432/ScribeTag
+ */
+
 :root { --primary: #007bff; --bg: #f8f9fa; --text: #212529; }
 * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
 body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; text-align: center; }
