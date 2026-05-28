@@ -1,64 +1,30 @@
 <!DOCTYPE html>
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
-
-<!--
-  Copyright (c) 2026 po2432
-  Repository: https://github.com/Po2432/ScribeTag
--->
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScribeTag Scanner</title>
+    <title>ScribeGrid Scanner</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Scan ScribeTag</h1>
-        <p id="status">Loading Vision Engine (OpenCV)... Please wait.</p>
-        
-        <div id="camera-container">
-            <video id="videoElement" autoplay playsinline></video>
-            <div class="scan-overlay"></div>
-            <!-- Hidden canvas used for OpenCV processing -->
-            <canvas id="canvasOutput" style="display:none;"></canvas> 
-        </div>
-
-        <div id="scan-result"></div>
-
-        <a href="index.html" class="btn btn-secondary">Back to Home</a>
+        <h1>Scan ScribeGrid</h1>
+        <p>Hold the camera steady over the drawn grid.</p>
+        <video id="videoElement" autoplay playsinline style="width:100%; border:4px solid #333; border-radius:8px;"></video>
+        <div id="scan-result" style="margin-top:15px; padding:15px; background:#d4edda; color:#155724; display:none; border-radius:8px; word-wrap:break-word;"></div>
+        <a href="index.html" class="btn btn-secondary">Back Home</a>
     </div>
-
-    <!-- Load OpenCV.js asynchronously -->
-    <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCvReady();"></script>
-    <script src="scanner.js"></script>
+    <script>
+        // Note: For a true grid-extraction, OpenCV.js cv.findContours -> warpPerspective is used.
+        // This initiates the camera stream for the UI shell.
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }});
+                document.getElementById('videoElement').srcObject = stream;
+            } catch (err) {
+                alert("Camera access required to scan.");
+            }
+        }
+        startCamera();
+    </script>
 </body>
 </html>
