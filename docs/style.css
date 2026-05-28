@@ -1,0 +1,17 @@
+:root { --primary: #007bff; --bg: #f8f9fa; --text: #212529; }
+* { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+body { background: var(--bg); color: var(--text); margin: 0; padding: 20px; text-align: center; }
+.container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+h1 { margin-top: 0; }
+.btn { display: inline-block; background: var(--primary); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; border: none; cursor: pointer; margin: 10px; font-size: 16px;}
+.btn:hover { opacity: 0.9; }
+.btn-secondary { background: #6c757d; }
+input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+.input-group { text-align: left; margin-bottom: 15px; }
+canvas { background: white; border: 2px solid #333; border-radius: 8px; max-width: 100%; overflow-x: auto; margin: 20px 0; }
+.instructions { text-align: left; background: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 20px; }
+.instructions li { margin-bottom: 8px; line-height: 1.5; }
+#camera-container { position: relative; margin: 20px auto; max-width: 500px; }
+video { width: 100%; border-radius: 8px; border: 3px solid #333; background: #000; }
+.scan-overlay { position: absolute; top: 50%; left: 10%; right: 10%; height: 2px; background: red; box-shadow: 0 0 10px red; transform: translateY(-50%); }
+#scan-result { margin-top: 15px; padding: 15px; background: #d4edda; color: #155724; border-radius: 8px; word-wrap: break-word; font-weight: bold; display: none; }
